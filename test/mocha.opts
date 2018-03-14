@@ -1,0 +1,9 @@
+--full-trace
+--use_strict
+--env test
+--timeout 10000
+--require co-mocha
+--watch
+test
+*.test.js
+./{,!(node_modules)/**/__tests__/}*.test.js

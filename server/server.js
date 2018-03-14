@@ -13,7 +13,7 @@ const router = express.Router();
 
 app.use(bodyParser.json());
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
 
@@ -35,3 +35,7 @@ router.route('/todos')
 
 app.use('/', router);
 
+module.exports = {
+  app,
+  server
+};

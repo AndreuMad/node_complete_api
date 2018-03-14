@@ -10,7 +10,7 @@ const userSchema = new Schema(
       minlength: 1
     }
   },
-  { collection: 'users1' }
+  { collection: 'users' }
 );
 
-module.exports = mongoose.model('user', userSchema);
+module.exports = mongoose.models.user || mongoose.model('user', userSchema);

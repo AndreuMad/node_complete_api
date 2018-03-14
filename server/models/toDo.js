@@ -21,4 +21,4 @@ const toDoSchema = new Schema(
   { collection: 'todos' }
 );
 
-module.exports = mongoose.model('todo', toDoSchema);
+module.exports = mongoose.models.todo || mongoose.model('todo', toDoSchema);
