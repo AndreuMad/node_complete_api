@@ -18,6 +18,17 @@ const server = app.listen(port, () => {
 });
 
 router.route('/todos')
+  .get((req, res) => {
+    ToDo.find()
+      .then((todos) => {
+        res.send({ todos });
+      })
+      .catch((error) => {
+        res
+          .status(400)
+          .send(error);
+      })
+  })
   .post((req, res) => {
     const item = new ToDo({
       text: req.body.text
