@@ -1,0 +1,30 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "cross-env NODE_ENV=development nodemon server.js",
+    "test": "cross-env NODE_ENV=test mocha --opts test/mocha.opts"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "cross-env": "5.1.4",
+    "dotenv": "5.0.1",
+    "joi": "13.1.2",
+    "mocha": "5.0.4",
+    "sinon": "5.0.0-next.3",
+    "supertest": "3.0.0"
+  },
+  "dependencies": {
+    "bluebird": "3.5.1",
+    "chai": "4.1.2",
+    "chai-as-promised": "7.1.1",
+    "co-mocha": "1.2.2",
+    "express": "4.16.3",
+    "mongoose": "5.0.9",
+    "sinon-chai": "3.0.0",
+    "use-strict": "1.0.1"
+  }
+}
