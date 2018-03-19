@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { ObjectID } = require('mongodb');
 const mongoose = require('./db/mongoose');
+const _ = require('lodash');
 
 const config = require('../config');
 const port = config.port;
@@ -70,6 +71,39 @@ router.route('/todos/:id')
           .send(error);
       });
   })
+  .patch((req, res) => {
+    const { id } = req.params;
+    const body = _.pick(req.body, ['text', 'completed']);
+
+    if (!ObjectID.isValid(id)) {
+      return res.status(404).send();
+    }
+
+    if (_.isBoolean(body.completed) && body.completed) {
+      body.completedAt = new Date().getTime();
+    } else {
+      body.completed = false;
+      body.completedAt = null;
+    }
+
+    ToDo.findByIdAndUpdate(
+      id,
+      { $set: body },
+      { new: true }
+    )
+      .then((todo) => {
+        if (!todo) {
+          return res.status(404).send();
+        }
+
+        res.send({ todo });
+      })
+      .catch((error) => {
+        res
+          .status(404)
+          .send({ error });
+      });
+  })
   .delete((req, res) => {
     const {
       params: { id },
@@ -77,7 +111,7 @@ router.route('/todos/:id')
     } = req;
 
     let queryId = multiple ? id.split(',') : id;
-    let invalidIds =[];
+    let invalidIds = [];
 
     if (multiple) {
       queryId.forEach((idItem) => {

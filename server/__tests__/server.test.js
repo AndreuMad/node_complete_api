@@ -117,6 +117,24 @@ describe('GET/todos/:id', function () {
   });
 });
 
+describe('PATCH/todos/:id', function () {
+  it('should patch todo doc', (done) => {
+    const hexId = todos[0]._id.toHexString();
+    request(app)
+      .patch(`/todos/${hexId}`)
+      .send({ text: 'Updated text' })
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.todo.text).to.be.equal('Updated text');
+      })
+      .end(done);
+  });
+
+  it('should set completedAt field if todo is completed', (done) => {
+    done();
+  });
+});
+
 describe('DELETE/todos/:id', function () {
   it('should delete todo doc', (done) => {
     const hexId = todos[0]._id.toHexString();
