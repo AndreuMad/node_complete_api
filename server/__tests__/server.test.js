@@ -12,7 +12,8 @@ const todos = [
   },
   {
     _id: new ObjectID(),
-    text: 'Second todo text'
+    text: 'Second todo text',
+    completed: true
   }
 ];
 
@@ -131,7 +132,38 @@ describe('PATCH/todos/:id', function () {
   });
 
   it('should set completedAt field if todo is completed', (done) => {
-    done();
+    const hexId = todos[0]._id.toHexString();
+    const text = 'New text';
+    request(app)
+      .patch(`/todos/${hexId}`)
+      .send({
+        text,
+        completed: true
+      })
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.todo.text).to.be.equal(text);
+        expect(res.body.todo.completed).to.be.equal(true);
+        expect(res.body.todo.completedAt).to.be.a('number');
+      })
+      .end(done);
+  });
+
+  it('should clear completedAt when todo is not completed', (done) => {
+    const hexId = todos[0]._id.toHexString();
+    const text = 'New text';
+    request(app)
+      .patch(`/todos/${hexId}`)
+      .send({
+        text,
+        completed: false
+      })
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.todo.text).to.be.equal(text);
+        expect(res.body.todo.completedAt).to.be.equal(null);
+      })
+      .end(done);
   });
 });
 
