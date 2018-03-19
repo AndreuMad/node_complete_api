@@ -54,14 +54,14 @@ router.route('/todos/:id')
         .send({ error: 'Invalid ObjectId' });
     }
 
-    ToDo.findById(req.params.id)
+    ToDo.findById(id)
       .then((todo) => {
         if (todo) {
           res.send({ todo });
         } else {
           res
             .status(404)
-            .res.send({});
+            .send({});
         }
       })
       .catch((error) => {
@@ -69,6 +69,71 @@ router.route('/todos/:id')
           .status(400)
           .send(error);
       });
+  })
+  .delete((req, res) => {
+    const {
+      params: { id },
+      query: { multiple }
+    } = req;
+
+    let queryId = multiple ? id.split(',') : id;
+    let invalidIds =[];
+
+    if (multiple) {
+      queryId.forEach((idItem) => {
+        if (!ObjectID.isValid(idItem)) {
+          invalidIds.push(idItem);
+        }
+      });
+    } else {
+      if (!ObjectID.isValid(queryId)) {
+        invalidIds.push(queryId);
+      }
+    }
+
+    if (invalidIds.length) {
+      return res
+        .status(404)
+        .send({ error: `Invalid ID: ${invalidIds}` });
+    }
+
+    if (multiple) {
+      ToDo.remove({
+        _id: {
+          $in: queryId
+        }
+      })
+        .then((result) => {
+          if (result) {
+            res.send(result);
+          } else {
+            res
+              .status(404)
+              .send();
+          }
+        })
+        .catch((error) => {
+          res
+            .status(400)
+            .send({ error })
+        });
+    } else {
+      ToDo.findByIdAndRemove(queryId)
+        .then((todo) => {
+          if (todo) {
+            res.send({ todo });
+          } else {
+            res
+              .status(404)
+              .send();
+          }
+        })
+        .catch((error) => {
+          res
+            .status(400)
+            .send({ error });
+        });
+    }
   });
 
 app.use('/', router);

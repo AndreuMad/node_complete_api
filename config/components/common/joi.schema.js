@@ -2,10 +2,12 @@ const joi = require('joi');
 
 const envEnum = [
   'development',
-  'test'
+  'test',
+  'production'
 ];
 
 module.exports = joi.object({
-  NODE_ENV: joi.string().valid(envEnum).required(),
-  PORT    : joi.string().required()
+  NODE_ENV   : joi.string().valid(envEnum).required(),
+  PORT       : joi.string().required(),
+  MONGODB_URI:joi.string().required()
 }).unknown().required();

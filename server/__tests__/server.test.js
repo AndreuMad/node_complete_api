@@ -1,3 +1,4 @@
+const { ObjectID } = require('mongodb');
 const { expect } = require('chai');
 const request = require('supertest');
 
@@ -6,9 +7,11 @@ const ToDo = require('../models/toDo');
 
 const todos = [
   {
+    _id: new ObjectID(),
     text: 'First todo text'
   },
   {
+    _id: new ObjectID(),
     text: 'Second todo text'
   }
 ];
@@ -73,13 +76,97 @@ describe('POST/todos', function () {
   });
 });
 
-describe('GET/Todos', function () {
+describe('GET/todos', function () {
   it('should get all todos', (done) => {
     request(app)
       .get('/todos')
       .expect(200)
       .expect((res) => {
         expect(res.body.todos.length).to.be.equal(2);
+      })
+      .end(done);
+  });
+});
+
+describe('GET/todos/:id', function () {
+  it('should return todo doc', (done) => {
+    request(app)
+      .get(`/todos/${todos[0]._id.toHexString()}`)
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.todo).to.include({
+          ...todos[0],
+          _id: todos[0]._id.toLocaleString()
+        });
+      })
+      .end(done);
+  });
+
+  it('should return 404 it todo is not founded', (done) => {
+    request(app)
+      .get(`/todos/${new ObjectID().toHexString()}`)
+      .expect(404)
+      .end(done);
+  });
+
+  it('should return 404 if ObjectID is invalid', (done) => {
+    request(app)
+      .get('/todos/fakeObjectId123')
+      .expect(404)
+      .end(done);
+  });
+});
+
+describe('DELETE/todos/:id', function () {
+  it('should delete todo doc', (done) => {
+    const hexId = todos[0]._id.toHexString();
+    request(app)
+      .delete(`/todos/${hexId}`)
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.todo._id).to.be.equal(hexId);
+      })
+      .end((error, res) => {
+        if (error) {
+          return done(error);
+        }
+
+        ToDo.findById(hexId)
+          .then((todo) => {
+            expect(todo).to.not.exist;
+            done();
+          })
+          .catch((error) => {
+            done(error);
+          });
+      });
+  });
+
+  it('should delete a multiple todo docs', (done) => {
+    const hexIds = `${todos[0]._id.toHexString()},${todos[1]._id.toHexString()}`;
+    request(app)
+      .delete(`/todos/${hexIds}?multiple=true`)
+      .expect(200)
+      .expect((res) => {
+        expect(res.body).to.deep.equal({ n: 2, ok: 1 });
+      })
+      .end(done);
+  });
+
+  it('should return 404 if todo not found', (done) => {
+    request(app)
+      .delete(`/todos/${new ObjectID()}`)
+      .expect(404)
+      .end(done);
+  });
+
+  it('should return 404 if ObjectID is invalid', (done) => {
+    const fakeId = 'fakeId';
+    request(app)
+      .delete(`/todos/${fakeId}`)
+      .expect(404)
+      .expect((res) => {
+        expect(res.body.error).to.be.equal(`Invalid ID: ${fakeId}`);
       })
       .end(done);
   });

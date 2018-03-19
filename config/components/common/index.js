@@ -11,7 +11,8 @@ if(error) {
 
 const config = {
   env : envVars.NODE_ENV,
-  port: envVars.PORT
+  port: envVars.PORT,
+  mongodbUri: envVars.MONGODB_URI
 };
 
 module.exports = config;
