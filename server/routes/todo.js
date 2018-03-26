@@ -19,7 +19,7 @@ const getTodo = (req, res) => {
   if (!ObjectID.isValid(id)) {
     return res
       .status(404)
-      .send({ error: 'Invalid ObjectId' });
+      .send({ error: 'Invalid ObjectID' });
   }
 
   ToDo.findById(id)

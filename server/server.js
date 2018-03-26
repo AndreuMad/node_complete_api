@@ -7,6 +7,7 @@ const port = config.port;
 
 const todoRoutes = require('./routes/todo');
 const userRoutes = require('./routes/user');
+const authenticate = require('./middlewares/authenticate');
 
 const app = express();
 const router = express.Router();
@@ -31,6 +32,15 @@ router.route('/todos/:id')
 
 router.route('/users')
   .post(userRoutes.postUser);
+
+router.route('/users/login')
+  .post(userRoutes.loginUser);
+
+router.route('/users/profile')
+  .get(authenticate, userRoutes.getUserProfile);
+
+router.route('/users/profile/token')
+  .delete(authenticate, userRoutes.deleteUserToken);
 
 app.use('/', router);
 

@@ -1,8 +1,11 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 const _ = require('lodash');
 const { Schema } = require('mongoose');
+
+const salt = require('../constants/salt');
 
 const UserSchema = new Schema(
   {
@@ -45,7 +48,7 @@ UserSchema.methods.toJSON = function () {
 
 UserSchema.methods.generateAuthToken = function () {
   const access = 'auth';
-  const token = jwt.sign({ _id: this._id.toHexString(), access }, 'abc123').toString();
+  const token = jwt.sign({ _id: this._id.toHexString(), access }, salt).toString();
 
   this.tokens.push({ access, token });
 
@@ -55,5 +58,72 @@ UserSchema.methods.generateAuthToken = function () {
       throw error;
     });
 };
+
+UserSchema.methods.removeToken = function (token) {
+  const user = this;
+  return user.update({
+    $pull: {
+      tokens: {
+        token
+      }
+    }
+  })
+};
+
+UserSchema.statics.findByToken = function (token) {
+  const User = this;
+  let decoded;
+
+  try {
+    decoded = jwt.verify(token, salt);
+  } catch (error) {
+    return Promise.reject();
+  }
+
+  return User.findOne({
+    '_id': decoded._id,
+    'tokens.token': token,
+    'tokens.access': 'auth'
+  });
+};
+
+UserSchema.statics.findByCredentials = function (email, password) {
+  const User = this;
+
+  return User.findOne({ email })
+    .then((user) => {
+      if (!user) {
+        return Promise.reject();
+      }
+
+      return new Promise((resolve, reject) => {
+        bcrypt.compare(password, user.password, (error, result) => {
+          if (result) {
+            resolve(user);
+          } else {
+            reject(error);
+          }
+        });
+      });
+    })
+};
+
+UserSchema.pre('save', function (next) {
+  const user = this;
+
+  if (user.isModified('password')) {
+    bcrypt.genSalt(10, (error, salt) => {
+      bcrypt.hash(user.password, salt, (error, hash) => {
+        if (error) {
+
+        }
+        user.password = hash;
+        next();
+      });
+    })
+  } else {
+    next();
+  }
+});
 
 module.exports = mongoose.models.user || mongoose.model('user', UserSchema);
