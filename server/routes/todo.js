@@ -3,8 +3,11 @@ const { ObjectID } = require('mongodb');
 const ToDo = require('../models/toDo');
 
 const getTodos = (req, res) => {
-  ToDo.find()
+  ToDo.find({
+    _creator: req.user._id
+  })
     .then((todos) => {
+
       res.send({ todos });
     })
     .catch((error) => {
@@ -22,7 +25,10 @@ const getTodo = (req, res) => {
       .send({ error: 'Invalid ObjectID' });
   }
 
-  ToDo.findById(id)
+  ToDo.findOne({
+    _id: id,
+    _creator: req.user._id
+  })
     .then((todo) => {
       if (todo) {
         res.send({ todo });
@@ -41,7 +47,8 @@ const getTodo = (req, res) => {
 
 const postTodo = (req, res) => {
   const item = new ToDo({
-    text: req.body.text
+    text: req.body.text,
+    _creator: req.user._id
   });
   item.save()
     .then((item) => {
@@ -69,8 +76,11 @@ const patchTodo = (req, res) => {
     body.completedAt = null;
   }
 
-  ToDo.findByIdAndUpdate(
-    id,
+  ToDo.findOneAndUpdate(
+    {
+      _id: id,
+      _creator: req.user._id
+    },
     { $set: body },
     { new: true }
   )
@@ -119,7 +129,8 @@ const deleteTodo = (req, res) => {
     ToDo.remove({
       _id: {
         $in: queryId
-      }
+      },
+      _creator: req.user._id
     })
       .then((result) => {
         if (result) {
@@ -136,7 +147,10 @@ const deleteTodo = (req, res) => {
           .send({ error })
       });
   } else {
-    ToDo.findByIdAndRemove(queryId)
+    ToDo.findOneAndRemove({
+      _id: id,
+      _creator: req.user._id
+    })
       .then((todo) => {
         if (todo) {
           res.send({ todo });

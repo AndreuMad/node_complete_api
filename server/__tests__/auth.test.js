@@ -151,7 +151,7 @@ describe('POST /users/login', () => {
   });
 });
 
-describe.only('DELETE /users/profile/token', () => {
+describe('DELETE /users/profile/token', () => {
 
   it('should remove auth token on logout', (done) => {
     request(app)

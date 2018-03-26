@@ -5,16 +5,20 @@ const User = require('../../models/user');
 
 const salt = require('../../constants/salt');
 
+const userIDs = [new ObjectID(), new ObjectID()];
+
 // Todos
 const todos = [
   {
     _id: new ObjectID(),
-    text: 'First todo text'
+    text: 'First todo text',
+    _creator: userIDs[0]
   },
   {
     _id: new ObjectID(),
     text: 'Second todo text',
-    completed: true
+    completed: true,
+    _creator: userIDs[1]
   }
 ];
 
@@ -27,10 +31,6 @@ const populateTodos = (done) => {
       done();
     });
 };
-
-
-// Users
-const userIDs = [new ObjectID(), new ObjectID()];
 
 const users = [
   {

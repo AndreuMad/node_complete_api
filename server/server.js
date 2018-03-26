@@ -20,13 +20,13 @@ const server = app.listen(port, () => {
 
 // Todos
 router.route('/todos')
-  .get(todoRoutes.getTodos)
-  .post(todoRoutes.postTodo);
+  .get(authenticate, todoRoutes.getTodos)
+  .post(authenticate, todoRoutes.postTodo);
 
 router.route('/todos/:id')
-  .get(todoRoutes.getTodo)
-  .patch(todoRoutes.patchTodo)
-  .delete(todoRoutes.deleteTodo);
+  .get(authenticate, todoRoutes.getTodo)
+  .patch(authenticate, todoRoutes.patchTodo)
+  .delete(authenticate, todoRoutes.deleteTodo);
 
 // Users
 
