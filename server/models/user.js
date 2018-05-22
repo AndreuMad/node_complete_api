@@ -5,7 +5,8 @@ const bcrypt = require('bcryptjs');
 const _ = require('lodash');
 const { Schema } = require('mongoose');
 
-const salt = require('../constants/salt');
+const config = require('../../config');
+const { salt } = config;
 
 const UserSchema = new Schema(
   {
@@ -54,7 +55,7 @@ UserSchema.methods.generateAuthToken = function () {
 
   return this.save()
     .then(() => token)
-    .catch((error) => {
+    .catch(error => {
       throw error;
     });
 };
@@ -91,7 +92,7 @@ UserSchema.statics.findByCredentials = function (email, password) {
   const User = this;
 
   return User.findOne({ email })
-    .then((user) => {
+    .then(user => {
       if (!user) {
         return Promise.reject();
       }

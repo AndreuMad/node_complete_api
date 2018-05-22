@@ -5,14 +5,15 @@ const result = joi.validate(process.env, schema);
 const error = result.error;
 const envVars = result.value;
 
-if(error) {
+if (error) {
   throw new Error(`Config validation error: ${error.message}`);
 }
 
 const config = {
-  env : envVars.NODE_ENV,
-  port: envVars.PORT,
-  mongodbUri: envVars.MONGODB_URI
+  env       : envVars.NODE_ENV,
+  port      : envVars.PORT,
+  mongodbUri: envVars.MONGODB_URI,
+  salt      : envVars.JWT_SECRET
 };
 
 module.exports = config;

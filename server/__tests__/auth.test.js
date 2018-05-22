@@ -12,7 +12,7 @@ const {
 
 beforeEach(populateUsers);
 
-describe('GET /users/me', () => {
+describe('GET /users/profile', () => {
 
   it('should return user if authenticated', (done) => {
     request(app)

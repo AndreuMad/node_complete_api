@@ -118,7 +118,7 @@ describe('GET /todos/:id', function () {
   });
 });
 
-describe.only('PATCH /todos/:id', function () {
+describe('PATCH /todos/:id', function () {
   it('should patch todo doc', (done) => {
     const hexId = todos[0]._id.toHexString();
     request(app)

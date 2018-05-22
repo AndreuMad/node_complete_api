@@ -24,6 +24,7 @@ const loginUser = (req, res) => {
 
   User.findByCredentials(body.email, body.password)
     .then((user) => {
+      console.log(user);
       return user.generateAuthToken()
         .then((token) => {
           res

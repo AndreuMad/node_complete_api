@@ -3,7 +3,8 @@ const { ObjectID } = require('mongodb');
 const ToDo = require('../../models/toDo');
 const User = require('../../models/user');
 
-const salt = require('../../constants/salt');
+const config = require('../../../config');
+const { salt } = config;
 
 const userIDs = [new ObjectID(), new ObjectID()];
 
