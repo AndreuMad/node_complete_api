@@ -130,7 +130,7 @@ describe('PATCH /todos/:id', function () {
       .send({ text: 'Updated text' })
       .expect(200)
       .expect((res) => {
-        expect(res.body.todo.text).to.be.equal('Updated text');
+        expect(res.body.text).to.be.equal('Updated text');
       })
       .end(done);
   });
@@ -157,11 +157,11 @@ describe('PATCH /todos/:id', function () {
       })
       .expect(200)
       .expect((res) => {
-        expect(res.body.todo).to.include({
+        expect(res.body).to.include({
           text,
           completed: true
         });
-        expect(res.body.todo.completedAt).to.be.a('number');
+        expect(res.body.completedAt).to.be.a('number');
       })
       .end(done);
   });
@@ -178,7 +178,7 @@ describe('PATCH /todos/:id', function () {
       })
       .expect(200)
       .expect((res) => {
-        expect(res.body.todo).to.include({
+        expect(res.body).to.include({
           text,
           completedAt: null
         });
@@ -195,7 +195,7 @@ describe('DELETE /todos/:id', function () {
       .set('x-auth', users[0].tokens[0].token)
       .expect(200)
       .expect((res) => {
-        expect(res.body.todo._id).to.be.equal(hexId);
+        expect(res.body._id).to.be.equal(hexId);
       })
       .end((error, res) => {
         if (error) {

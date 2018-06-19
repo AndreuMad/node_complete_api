@@ -2,66 +2,67 @@ const _ = require('lodash');
 const { ObjectID } = require('mongodb');
 const ToDo = require('../models/toDo');
 
-const getTodos = (req, res) => {
-  ToDo.find({
-    _creator: req.user._id
-  })
-    .then((todos) => {
+const getTodos = async (req, res) => {
+  try {
+    const todos = await ToDo.find({
+      _creator: req.user._id
+    });
 
-      res.send({ todos });
-    })
-    .catch((error) => {
-      res
-        .status(400)
-        .send(error);
-    })
+    res.send({ todos });
+  } catch (error) {
+    res
+      .status(400)
+      .send(error);
+  }
 };
 
-const getTodo = (req, res) => {
+const getTodo = async (req, res) => {
   const { id } = req.params;
+
   if (!ObjectID.isValid(id)) {
     return res
       .status(404)
       .send({ error: 'Invalid ObjectID' });
   }
 
-  ToDo.findOne({
-    _id: id,
-    _creator: req.user._id
-  })
-    .then((todo) => {
-      if (todo) {
-        res.send({ todo });
-      } else {
-        res
-          .status(404)
-          .send({});
-      }
-    })
-    .catch((error) => {
-      res
-        .status(400)
-        .send(error);
+  try {
+    const todo = await ToDo.findOne({
+      _id: id,
+      _creator: req.user._id
     });
+
+    if (todo) {
+      res.send({ todo });
+    } else {
+      res
+        .status(404)
+        .send({});
+    }
+  } catch (error) {
+    res
+      .status(400)
+      .send(error);
+  }
 };
 
-const postTodo = (req, res) => {
+const postTodo = async (req, res) => {
   const item = new ToDo({
     text: req.body.text,
     _creator: req.user._id
   });
-  item.save()
-    .then((item) => {
-      res.json(item);
-    })
-    .catch((error) => {
-      res
-        .status(400)
-        .json(error);
-    });
+
+  try {
+    const resultItem = await item.save();
+
+    res.json(resultItem);
+  } catch (error) {
+    res
+      .status(400)
+      .json(error);
+  }
 };
 
-const patchTodo = (req, res) => {
+const patchTodo = async (req, res) => {
   const { id } = req.params;
   const body = _.pick(req.body, ['text', 'completed']);
 
@@ -76,29 +77,29 @@ const patchTodo = (req, res) => {
     body.completedAt = null;
   }
 
-  ToDo.findOneAndUpdate(
-    {
-      _id: id,
-      _creator: req.user._id
-    },
-    { $set: body },
-    { new: true }
-  )
-    .then((todo) => {
-      if (!todo) {
-        return res.status(404).send();
-      }
+  try {
+    const updatedTodo = await ToDo.findOneAndUpdate(
+      {
+        _id: id,
+        _creator: req.user._id
+      },
+      { $set: body },
+      { new: true }
+    );
 
-      res.send({ todo });
-    })
-    .catch((error) => {
-      res
-        .status(404)
-        .send({ error });
-    });
+    if (!updatedTodo) {
+      res.status(404).send();
+    }
+
+    res.send(updatedTodo);
+  } catch (error) {
+    res
+      .status(404)
+      .send({ error });
+  }
 };
 
-const deleteTodo = (req, res) => {
+const deleteTodo = async (req, res) => {
   const {
     params: { id },
     query: { multiple }
@@ -126,45 +127,45 @@ const deleteTodo = (req, res) => {
   }
 
   if (multiple) {
-    ToDo.remove({
-      _id: {
-        $in: queryId
-      },
-      _creator: req.user._id
-    })
-      .then((result) => {
-        if (result) {
-          res.send(result);
-        } else {
-          res
-            .status(404)
-            .send();
-        }
-      })
-      .catch((error) => {
-        res
-          .status(400)
-          .send({ error })
+    try {
+      const removedTodos = await ToDo.remove({
+        _id: {
+          $in: queryId
+        },
+        _creator: req.user._id
       });
+
+      if (removedTodos) {
+        res.send(removedTodos);
+      } else {
+        res
+          .status(404)
+          .send();
+      }
+    } catch (error) {
+      res
+        .status(400)
+        .send({ error });
+    }
   } else {
-    ToDo.findOneAndRemove({
-      _id: id,
-      _creator: req.user._id
-    })
-      .then((todo) => {
-        if (todo) {
-          res.send({ todo });
-        } else {
-          res
-            .status(404)
-            .send();
-        }
-      })
-      .catch((error) => {
-        res
-          .status(400)
-          .send({ error });
+    try {
+      const removedTodo = await ToDo.findOneAndRemove({
+        _id: id,
+        _creator: req.user._id
       });
+
+      if (removedTodo) {
+        res.send(removedTodo);
+      } else {
+        res
+          .status(404)
+          .send();
+      }
+    } catch (error) {
+      res
+        .status(400)
+        .send({ error });
+    }
   }
 };
 

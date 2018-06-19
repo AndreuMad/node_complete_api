@@ -7,6 +7,7 @@ const port = config.port;
 
 const todoRoutes = require('./routes/todo');
 const userRoutes = require('./routes/user');
+const currencyRoutes = require('./routes/currency');
 const authenticate = require('./middlewares/authenticate');
 
 const app = express();
@@ -41,6 +42,9 @@ router.route('/users/profile')
 
 router.route('/users/profile/token')
   .delete(authenticate, userRoutes.deleteUserToken);
+
+router.route('/currency/')
+  .get(currencyRoutes.getCurrency);
 
 app.use('/', router);
 
