@@ -89,10 +89,11 @@ const patchTodo = async (req, res) => {
 
     if (!updatedTodo) {
       res.status(404).send();
+    } else {
+      res.send(updatedTodo);
     }
-
-    res.send(updatedTodo);
   } catch (error) {
+    console.log(error);
     res
       .status(404)
       .send({ error });

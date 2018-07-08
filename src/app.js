@@ -1,23 +1,23 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const mongoose = require('./db/mongoose');
 
-const config = require('../config');
-const port = config.port;
-
-const todoRoutes = require('./routes/todo');
-const userRoutes = require('./routes/user');
-const currencyRoutes = require('./routes/currency');
-const authenticate = require('./middlewares/authenticate');
+const mongoDatabaseService = require('./db/mongoose');
+const { databases } = require('./constants');
 
 const app = express();
 const router = express.Router();
 
-app.use(bodyParser.json());
+mongoDatabaseService.initialize(databases.nodeCompleteApiMongoDatabase);
 
-const server = app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+// Middlewares
+const authenticate = require('./middlewares/authenticate');
+
+// Routes
+const todoRoutes = require('./routes/todo');
+const userRoutes = require('./routes/user');
+const currencyRoutes = require('./routes/currency');
+
+app.use(bodyParser.json());
 
 // Todos
 router.route('/todos')
@@ -48,7 +48,4 @@ router.route('/currency/')
 
 app.use('/', router);
 
-module.exports = {
-  app,
-  server
-};
+module.exports = app;

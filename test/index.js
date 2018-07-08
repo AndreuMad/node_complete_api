@@ -5,7 +5,7 @@ const bluebird = require('bluebird');
 const sinonChai = require('sinon-chai');
 const chaiAsPromised = require('chai-as-promised');
 
-const { server } = require('../server/server');
+const server = require('../src/server');
 
 chai.use(sinonChai);
 chai.use(chaiAsPromised);
@@ -21,6 +21,6 @@ after(function afterHook() {
 });
 
 afterEach(function afterEachHook() {
-  server.close();
+  //server.close();
   this.sandbox.restore();
 });

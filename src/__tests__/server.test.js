@@ -2,7 +2,7 @@ const { ObjectID } = require('mongodb');
 const { expect } = require('chai');
 const request = require('supertest');
 
-const { app } = require('../server');
+const app = require('../app');
 const ToDo = require('../models/toDo');
 const {
   todos,

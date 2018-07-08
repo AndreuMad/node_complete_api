@@ -5,7 +5,7 @@ MongoClient.connect('mongodb://localhost:27017/', (err, database) => {
     return;
   }
 
-  console.log('Connected to MongoDB server');
+  console.log('Connected to MongoDB src');
 
   // deleteMany
   database.db('NodeCompleteApi').collection('todos')

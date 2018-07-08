@@ -1,12 +1,15 @@
-const mongoose = require('mongoose');
 const validator = require('validator');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const _ = require('lodash');
 const { Schema } = require('mongoose');
+const { nodeCompleteApiMongoDatabase } = require('../constants').databases;
+const mongoDatabaseService = require('../db/mongoose');
 
 const config = require('../../config');
 const { salt } = config;
+
+const connection = mongoDatabaseService.getConnection(nodeCompleteApiMongoDatabase.key);
 
 const UserSchema = new Schema(
   {
@@ -127,4 +130,4 @@ UserSchema.pre('save', function (next) {
   }
 });
 
-module.exports = mongoose.models.user || mongoose.model('user', UserSchema);
+module.exports = connection.models.user || connection.model('user', UserSchema);

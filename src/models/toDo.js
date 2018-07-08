@@ -1,5 +1,8 @@
-const mongoose = require('mongoose');
 const { Schema } = require('mongoose');
+const { nodeCompleteApiMongoDatabase } = require('../constants').databases;
+const mongoDatabaseService = require('../db/mongoose');
+
+const connection = mongoDatabaseService.getConnection(nodeCompleteApiMongoDatabase.key);
 
 const toDoSchema = new Schema(
   {
@@ -22,7 +25,9 @@ const toDoSchema = new Schema(
       required: true,
     }
   },
-  { collection: 'todos' }
+  {
+    collection: 'todos'
+  }
 );
 
-module.exports = mongoose.models.todo || mongoose.model('todo', toDoSchema);
+module.exports = connection.models.todo || connection.model('todo', toDoSchema);
