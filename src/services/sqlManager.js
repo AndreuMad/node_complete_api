@@ -11,7 +11,7 @@ module.exports = {
       return sqlQueries[sqlPath];
     }
 
-    if (!fs.fileExistsSync(sqlPath)) {
+    if (!fs.existsSync(sqlPath)) {
       return new Error(`Target sql "${sqlName}.sql" not found in folder "${path.resolve(sourceDir, 'sql')}"`);
     }
 
