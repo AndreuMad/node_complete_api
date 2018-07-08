@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const { ObjectID } = require('mongodb');
-const ToDo = require('../../models/toDo');
-const User = require('../../models/user');
+const ToDo = require('../../features/toDos/models');
+const User = require('../../features/users/models');
 
 const config = require('../../../config');
 const { salt } = config;

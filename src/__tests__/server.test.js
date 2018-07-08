@@ -3,7 +3,7 @@ const { expect } = require('chai');
 const request = require('supertest');
 
 const app = require('../app');
-const ToDo = require('../models/toDo');
+const ToDo = require('../features/toDos/models');
 const {
   todos,
   populateTodos,

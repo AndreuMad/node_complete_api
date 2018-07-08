@@ -3,7 +3,7 @@ const { expect } = require('chai');
 const request = require('supertest');
 
 const app = require('../app');
-const User = require('../models/user');
+const User = require('../features/users/models');
 
 const {
   users,

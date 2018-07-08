@@ -28,7 +28,6 @@ const serverService = {
       .request()
       .query('SELECT * FROM cats');
 
-    console.log(result);
     return server;
   },
 

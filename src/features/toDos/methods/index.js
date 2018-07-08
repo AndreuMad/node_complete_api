@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const { ObjectID } = require('mongodb');
-const ToDo = require('../models/toDo');
+const ToDo = require('../models');
 
 const getTodos = async (req, res) => {
   try {

@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const User = require('../models/user');
+const User = require('../models');
 
 const postUser = async (req, res) => {
   const body = _.pick(req.body, ['email', 'password']);

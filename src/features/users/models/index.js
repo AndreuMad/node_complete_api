@@ -3,10 +3,10 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const _ = require('lodash');
 const { Schema } = require('mongoose');
-const { nodeCompleteApiMongoDatabase } = require('../constants').databases;
-const mongoDatabaseService = require('../db/mongoose');
+const { nodeCompleteApiMongoDatabase } = require('../../../constants').databases;
+const mongoDatabaseService = require('../../../db/mongoose');
 
-const config = require('../../config');
+const config = require('../../../../config');
 const { salt } = config;
 
 const connection = mongoDatabaseService.getConnection(nodeCompleteApiMongoDatabase.key);

@@ -1,4 +1,4 @@
-const User = require('../models/user');
+const User = require('../features/users/models');
 
 module.exports = (req, res, next) => {
   const token = req.header('x-auth');

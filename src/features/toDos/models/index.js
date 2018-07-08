@@ -1,6 +1,6 @@
 const { Schema } = require('mongoose');
-const { nodeCompleteApiMongoDatabase } = require('../constants').databases;
-const mongoDatabaseService = require('../db/mongoose');
+const { nodeCompleteApiMongoDatabase } = require('../../../constants').databases;
+const mongoDatabaseService = require('../../../db/mongoose');
 
 const connection = mongoDatabaseService.getConnection(nodeCompleteApiMongoDatabase.key);
 
