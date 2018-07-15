@@ -5,13 +5,13 @@ const dbService = require('../../../db/mssql');
 const { databases } = require('../../../constants');
 const sqlManager = require('../../../services/sqlManager');
 
-const getCats = async (req, res) => {
+const getBooks = async (req, res) => {
   const db = dbService.getConnection(databases.nodeCompleteApiSQLDatabase.key);
-  const getCatsQuery = sqlManager.getSql(path.resolve(__dirname, '../'), 'getCats');
+  const getBooksQuery = sqlManager.getSql(path.resolve(__dirname, '../'), 'getBooks');
 
   try {
     const sqlResult = await db.request()
-      .query(getCatsQuery);
+      .query(getBooksQuery);
 
     const result = _.get(sqlResult, 'recordset', '');
 
@@ -20,7 +20,7 @@ const getCats = async (req, res) => {
     } else {
       res
         .status(404)
-        .send({ message: 'Cat not found' });
+        .send({ message: 'Books not found' });
     }
   } catch (error) {
     res
@@ -29,15 +29,15 @@ const getCats = async (req, res) => {
   }
 };
 
-getCat = async (req, res) => {
+getBook = async (req, res) => {
   const { id } = req.params;
   const db = dbService.getConnection(databases.nodeCompleteApiSQLDatabase.key);
-  const getCatQuery = sqlManager.getSql(path.resolve(__dirname, '../'), 'getCat');
+  const getBookQuery = sqlManager.getSql(path.resolve(__dirname, '../'), 'getBook');
 
   try {
     const sqlResult = await db.request()
       .input('id', id)
-      .query(getCatQuery);
+      .query(getBookQuery);
 
     const result = _.get(sqlResult, 'recordset[0]', '');
 
@@ -46,7 +46,7 @@ getCat = async (req, res) => {
     } else {
       res
         .status(404)
-        .send({ message: 'Cat not found' });
+        .send({ message: 'Book not found' });
     }
   } catch (error) {
     res
@@ -55,20 +55,28 @@ getCat = async (req, res) => {
   }
 };
 
-const postCat = async (req, res) => {
+const postBook = async (req, res) => {
   const {
-    name,
-    age
+    title,
+    authorFirstName,
+    authorLastName,
+    releasedYear,
+    stockQuantity,
+    pages
   } = req.body;
 
   const db = dbService.getConnection(databases.nodeCompleteApiSQLDatabase.key);
-  const postCatQuery = sqlManager.getSql(path.resolve(__dirname, '../'), 'postCat');
+  const postBookQuery = sqlManager.getSql(path.resolve(__dirname, '../'), 'postBook');
 
   try {
     const sqlResult = await db.request()
-      .input('name', sql.NVarChar, name)
-      .input('age', sql.Int, age)
-      .query(postCatQuery);
+      .input('title', sql.NVarChar, title)
+      .input('author_first_name', sql.NVarChar, authorFirstName)
+      .input('author_last_name', sql.NVarChar, authorLastName)
+      .input('released_year', sql.Int, releasedYear)
+      .input('stock_quantity', sql.Int, stockQuantity)
+      .input('pages', sql.Int, pages)
+      .query(postBookQuery);
 
     res.send(sqlResult);
   } catch (error) {
@@ -78,7 +86,7 @@ const postCat = async (req, res) => {
   }
 };
 
-const patchCat = async (req, res) => {
+const patchBook = async (req, res) => {
   const {
     name,
     age
@@ -86,7 +94,7 @@ const patchCat = async (req, res) => {
   const { id } = req.params;
 
   const db = dbService.getConnection(databases.nodeCompleteApiSQLDatabase.key);
-  const patchCatQuery = sqlManager.getSql(path.resolve(__dirname, '../'), 'patchCat');
+  const patchBookQuery = sqlManager.getSql(path.resolve(__dirname, '../'), 'patchBook');
 
   try {
     const sqlRequest = db.request()
@@ -100,7 +108,7 @@ const patchCat = async (req, res) => {
       sqlRequest.input('age', sql.Int, age);
     }
 
-    const sqlResult = await sqlRequest.query(patchCatQuery);
+    const sqlResult = await sqlRequest.query(patchBookQuery);
 
     res.send(sqlResult);
   } catch (error) {
@@ -110,16 +118,16 @@ const patchCat = async (req, res) => {
   }
 };
 
-const deleteCat = async (req, res) => {
+const deleteBook = async (req, res) => {
   const { id } = req.params;
 
   const db = dbService.getConnection(databases.nodeCompleteApiSQLDatabase.key);
-  const deleteCatQuery = sqlManager.getSql(path.resolve(__dirname, '../'), 'deleteCat');
+  const deleteBookQuery = sqlManager.getSql(path.resolve(__dirname, '../'), 'deleteBook');
 
   try {
     const sqlResult = await db.request()
       .input('id', id)
-      .query(deleteCatQuery);
+      .query(deleteBookQuery);
 
     res.send(sqlResult);
   } catch (error) {
@@ -130,9 +138,9 @@ const deleteCat = async (req, res) => {
 };
 
 module.exports = {
-  getCats,
-  getCat,
-  postCat,
-  patchCat,
-  deleteCat
+  getBooks,
+  getBook,
+  postBook,
+  patchBook,
+  deleteBook
 };

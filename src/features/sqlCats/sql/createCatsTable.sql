@@ -1,6 +1,0 @@
-CREATE TABLE cats
-(
-    id INT NOT NULL IDENTITY PRIMARY KEY,
-    name VARCHAR(20) DEFAULT 'No name provided' NOT NULL,
-    age INT DEFAULT 1 NOT NULL
-);
