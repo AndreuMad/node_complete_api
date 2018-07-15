@@ -29,6 +29,32 @@ const getCats = async (req, res) => {
   }
 };
 
+getCat = async (req, res) => {
+  const { id } = req.params;
+  const db = dbService.getConnection(databases.nodeCompleteApiSQLDatabase.key);
+  const getCatQuery = sqlManager.getSql(path.resolve(__dirname, '../'), 'getCat');
+
+  try {
+    const sqlResult = await db.request()
+      .input('id', id)
+      .query(getCatQuery);
+
+    const result = _.get(sqlResult, 'recordset[0]', '');
+
+    if (result) {
+      res.send(result);
+    } else {
+      res
+        .status(404)
+        .send({ message: 'Cat not found' });
+    }
+  } catch (error) {
+    res
+      .status(500)
+      .send();
+  }
+};
+
 const postCat = async (req, res) => {
   const {
     name,
@@ -52,7 +78,61 @@ const postCat = async (req, res) => {
   }
 };
 
+const patchCat = async (req, res) => {
+  const {
+    name,
+    age
+  } = req.body;
+  const { id } = req.params;
+
+  const db = dbService.getConnection(databases.nodeCompleteApiSQLDatabase.key);
+  const patchCatQuery = sqlManager.getSql(path.resolve(__dirname, '../'), 'patchCat');
+
+  try {
+    const sqlRequest = db.request()
+      .input('id', id);
+
+    if (name) {
+      sqlRequest.input('name', sql.NVarChar, name);
+    }
+
+    if (age) {
+      sqlRequest.input('age', sql.Int, age);
+    }
+
+    const sqlResult = await sqlRequest.query(patchCatQuery);
+
+    res.send(sqlResult);
+  } catch (error) {
+    res
+      .status(500)
+      .send(error);
+  }
+};
+
+const deleteCat = async (req, res) => {
+  const { id } = req.params;
+
+  const db = dbService.getConnection(databases.nodeCompleteApiSQLDatabase.key);
+  const deleteCatQuery = sqlManager.getSql(path.resolve(__dirname, '../'), 'deleteCat');
+
+  try {
+    const sqlResult = await db.request()
+      .input('id', id)
+      .query(deleteCatQuery);
+
+    res.send(sqlResult);
+  } catch (error) {
+    res
+      .status(500)
+      .send(error);
+  }
+};
+
 module.exports = {
   getCats,
-  postCat
+  getCat,
+  postCat,
+  patchCat,
+  deleteCat
 };

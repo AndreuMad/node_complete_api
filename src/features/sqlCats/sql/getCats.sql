@@ -1,1 +1,1 @@
-SELECT * FROM cats;
+SELECT id, name, age FROM cats;
