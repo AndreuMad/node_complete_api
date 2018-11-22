@@ -24,10 +24,6 @@ const serverService = {
     // log info
     console.log(`Server is running on port ${port}`);
 
-    const result = await sqlDatabaseService.getConnection(databases.nodeCompleteApiSQLDatabase.key)
-      .request()
-      .query('SELECT * FROM cats');
-
     return server;
   },
 
