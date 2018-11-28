@@ -6,8 +6,11 @@ const router = express.Router();
 router.route('/books/search')
   .get(methods.searchBooksByTitle);
 
-router.route('/books/years')
-  .get(methods.getBooksYears)
+router.route('/books/authors')
+  .get(methods.getBooksAuthors);
+
+router.route('/books/authors/:author/latest')
+  .get(methods.getAuthorsLatestBook);
 
 router.route('/books/:id')
   .get(methods.getBook)

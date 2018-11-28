@@ -42,15 +42,42 @@ const getBooks = async (req, res) => {
   });
 };
 
-const getBooksYears = async (req, res) => {
+const getBooksAuthors = async (req, res) => {
   const db = dbService.getConnection(databases.nodeCompleteApiSQLDatabase.key);
-  const getBooksYearsQuery = sqlManager.getSql(path.resolve(__dirname, '../'), 'getBooksYears');
+  const getBooksAuthorsQuery = sqlManager.getSql(path.resolve(__dirname, '../'), 'getBooksAuthors');
 
   let sqlResult;
 
   try {
     sqlResult = await db.request()
-      .query(getBooksYearsQuery);
+      .query(getBooksAuthorsQuery);
+  } catch (error) {
+    console.log(error);
+
+    res
+      .status(500)
+      .send();
+
+    return;
+  }
+
+  const result = _.get(sqlResult, 'recordset');
+
+  res.send(result);
+};
+
+const getAuthorsLatestBook = async (req, res) => {
+  const { author } = req.params;
+
+  const db = dbService.getConnection(databases.nodeCompleteApiSQLDatabase.key);
+  const getAuthorsLatestBookQuery = sqlManager.getSql(path.resolve(__dirname, '../'), 'getAuthorsLatestBook');
+
+  let sqlResult;
+
+  try {
+    sqlResult = await db.request()
+      .input('author', author)
+      .query(getAuthorsLatestBookQuery);
   } catch (error) {
     console.log(error);
 
@@ -207,7 +234,8 @@ const deleteBook = async (req, res) => {
 
 module.exports = {
   getBooks,
-  getBooksYears,
+  getBooksAuthors,
+  getAuthorsLatestBook,
   getBook,
   searchBooksByTitle,
   postBook,
