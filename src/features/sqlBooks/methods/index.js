@@ -8,7 +8,11 @@ const sqlManager = require('../../../services/sqlManager');
 const getBooks = async (req, res) => {
   const {
     limit = 10,
-    skip = 0
+    skip = 0,
+    min_released_year,
+    max_released_year,
+    author_first_name,
+    author_last_name
   } = req.query;
 
   const db = dbService.getConnection(databases.nodeCompleteApiSQLDatabase.key);
@@ -20,6 +24,10 @@ const getBooks = async (req, res) => {
     sqlResult = await db.request()
       .input('Limit', sql.Int, limit)
       .input('Skip', sql.Int, skip)
+      .input('MinReleasedYear', sql.Int, min_released_year)
+      .input('MaxReleasedYear', sql.Int, max_released_year)
+      .input('AuthorFirstName', sql.VarChar(255), author_first_name)
+      .input('AuthorLastName', sql.VarChar(255), author_last_name)
       .query(getBooksQuery);
   } catch (error) {
     console.log(error);
@@ -179,8 +187,12 @@ const postBook = async (req, res) => {
 
 const patchBook = async (req, res) => {
   const {
-    name,
-    age
+    title,
+    author_first_name,
+    author_last_name,
+    released_year,
+    stock_quantity,
+    pages
   } = req.body;
   const { id } = req.params;
 
@@ -190,18 +202,15 @@ const patchBook = async (req, res) => {
   let sqlResult;
 
   try {
-    const sqlRequest = db.request()
-      .input('id', id);
-
-    if (name) {
-      sqlRequest.input('name', sql.NVarChar, name);
-    }
-
-    if (age) {
-      sqlRequest.input('age', sql.Int, age);
-    }
-
-    sqlResult = await sqlRequest.query(patchBookQuery);
+    sqlResult = await db.request()
+      .input('id', id)
+      .input('title', sql.VarChar(100), title)
+      .input('author_first_name', sql.VarChar(100), author_first_name)
+      .input('author_last_name', sql.VarChar(100), author_last_name)
+      .input('released_year', sql.Int, released_year)
+      .input('stock_quantity', sql.Int, stock_quantity)
+      .input('pages', sql.Int, pages)
+      .query(patchBookQuery);
   } catch (error) {
     res
       .status(500)

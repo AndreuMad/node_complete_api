@@ -4,7 +4,8 @@ INSERT INTO books(
     author_last_name,
     released_year,
     stock_quantity,
-    pages
+    pages,
+    date_added
 )
 VALUES (
     @title,
@@ -12,5 +13,6 @@ VALUES (
     @author_last_name,
     @released_year,
     @stock_quantity,
-    @pages
+    @pages,
+    GETDATE()
 );
