@@ -101,6 +101,45 @@ const getAuthorsLatestBook = async (req, res) => {
   res.send(result);
 };
 
+const getBooksByPeriod = async (req, res) => {
+  const { period } = req.params;
+  const {
+    limit = 10,
+    skip = 0
+  } = req.query;
+
+  const db = dbService.getConnection(databases.nodeCompleteApiSQLDatabase.key);
+  const getBooksByPeriodQuery = sqlManager.getSql(path.resolve(__dirname, '../'), 'getBooksByPeriod');
+
+  let sqlResult;
+
+  try {
+    sqlResult = await db.request()
+      .input('Period', sql.VarChar(16), period)
+      .input('Limit', sql.Int, limit)
+      .input('Skip', sql.Int, skip)
+      .query(getBooksByPeriodQuery);
+  } catch (ex) {
+    console.log(ex);
+
+    res
+      .status(500)
+      .send(ex);
+
+    return;
+  }
+
+  const books = _.get(sqlResult, 'recordset', []);
+  const booksCount = _.get(sqlResult, 'recordsets[1][0].booksCount', null);
+  const authorsCount = _.get(sqlResult, 'recordsets[1][0].authorsCount', null);
+
+  res.send({
+    books,
+    booksCount,
+    authorsCount
+  });
+};
+
 const getBook = async (req, res) => {
   const { id } = req.params;
   const db = dbService.getConnection(databases.nodeCompleteApiSQLDatabase.key);
@@ -245,6 +284,7 @@ module.exports = {
   getBooks,
   getBooksAuthors,
   getAuthorsLatestBook,
+  getBooksByPeriod,
   getBook,
   searchBooksByTitle,
   postBook,

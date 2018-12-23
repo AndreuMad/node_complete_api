@@ -12,6 +12,9 @@ router.route('/books/authors')
 router.route('/books/authors/:author/latest')
   .get(methods.getAuthorsLatestBook);
 
+router.route('/books/last/:period')
+  .get(methods.getBooksByPeriod);
+
 router.route('/books/:id')
   .get(methods.getBook)
   .patch(methods.patchBook)
