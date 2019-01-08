@@ -3,6 +3,9 @@ const methods = require('../methods');
 
 const router = express.Router();
 
+router.route('/books/orders')
+  .get(methods.getOrders);
+
 router.route('/books/search')
   .get(methods.searchBooksByTitle);
 

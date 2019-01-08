@@ -1,2 +1,2 @@
-SELECT DISTINCT author_first_name, author_last_name
-FROM books;
+SELECT DISTINCT author.first_name, author.last_name
+FROM authors;

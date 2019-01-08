@@ -40,8 +40,8 @@ const getBooks = async (req, res) => {
   }
 
   const books = _.get(sqlResult, 'recordset', []);
-  const booksCount = _.get(sqlResult, 'recordsets[1][0].booksCount', null);
-  const authorsCount = _.get(sqlResult, 'recordsets[1][0].authorsCount', null);
+  const booksCount = _.get(sqlResult, 'recordsets[1][0].books_count', null);
+  const authorsCount = _.get(sqlResult, 'recordsets[1][0].authors_count', null);
 
   res.send({
     books,
@@ -130,8 +130,8 @@ const getBooksByPeriod = async (req, res) => {
   }
 
   const books = _.get(sqlResult, 'recordset', []);
-  const booksCount = _.get(sqlResult, 'recordsets[1][0].booksCount', null);
-  const authorsCount = _.get(sqlResult, 'recordsets[1][0].authorsCount', null);
+  const booksCount = _.get(sqlResult, 'recordsets[1][0].books_count', null);
+  const authorsCount = _.get(sqlResult, 'recordsets[1][0].authors_count', null);
 
   res.send({
     books,
@@ -152,9 +152,12 @@ const getBook = async (req, res) => {
       .input('id', id)
       .query(getBookQuery);
   } catch (error) {
+    console.log(error);
     res
       .status(500)
       .send();
+
+    return;
   }
 
   const result = _.get(sqlResult, 'recordset[0]', null);
@@ -185,6 +188,7 @@ const searchBooksByTitle = async (req, res) => {
     res
       .status(500)
       .send(ex);
+    return;
   }
 
   const result = _.get(sqlResult, 'recordset', []);
@@ -195,8 +199,7 @@ const searchBooksByTitle = async (req, res) => {
 const postBook = async (req, res) => {
   const {
     title,
-    authorFirstName,
-    authorLastName,
+    authorId,
     releasedYear,
     stockQuantity,
     pages
@@ -209,8 +212,7 @@ const postBook = async (req, res) => {
   try {
     sqlResult = await db.request()
       .input('title', sql.NVarChar, title)
-      .input('author_first_name', sql.NVarChar, authorFirstName)
-      .input('author_last_name', sql.NVarChar, authorLastName)
+      .input('author_id', sql.Int, authorId)
       .input('released_year', sql.Int, releasedYear)
       .input('stock_quantity', sql.Int, stockQuantity)
       .input('pages', sql.Int, pages)
@@ -227,8 +229,7 @@ const postBook = async (req, res) => {
 const patchBook = async (req, res) => {
   const {
     title,
-    author_first_name,
-    author_last_name,
+    author_id,
     released_year,
     stock_quantity,
     pages
@@ -244,8 +245,7 @@ const patchBook = async (req, res) => {
     sqlResult = await db.request()
       .input('id', id)
       .input('title', sql.VarChar(100), title)
-      .input('author_first_name', sql.VarChar(100), author_first_name)
-      .input('author_last_name', sql.VarChar(100), author_last_name)
+      .input('author_id', sql.Int, author_id)
       .input('released_year', sql.Int, released_year)
       .input('stock_quantity', sql.Int, stock_quantity)
       .input('pages', sql.Int, pages)
@@ -280,6 +280,29 @@ const deleteBook = async (req, res) => {
   res.send(sqlResult);
 };
 
+const getOrders = async (req, res) => {
+  const db = dbService.getConnection(databases.nodeCompleteApiSQLDatabase.key);
+  const getOrdersQuery = sqlManager.getSql(path.resolve(__dirname, '../'), 'getOrders');
+
+  let sqlResult;
+
+  try {
+    sqlResult = await db.request()
+      .query(getOrdersQuery);
+  } catch (ex) {
+    console.log(ex);
+    res
+      .status(500)
+      .send(ex);
+
+    return;
+  }
+
+  const result = _.get(sqlResult, 'recordset', []);
+
+  res.send(result);
+};
+
 module.exports = {
   getBooks,
   getBooksAuthors,
@@ -289,5 +312,7 @@ module.exports = {
   searchBooksByTitle,
   postBook,
   patchBook,
-  deleteBook
+  deleteBook,
+
+  getOrders
 };

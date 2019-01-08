@@ -1,7 +1,6 @@
 INSERT INTO books(
     title,
-    author_first_name,
-    author_last_name,
+    author_id,
     released_year,
     stock_quantity,
     pages,
@@ -9,8 +8,7 @@ INSERT INTO books(
 )
 VALUES (
     @title,
-    @author_first_name,
-    @author_last_name,
+    @author_id,
     @released_year,
     @stock_quantity,
     @pages,

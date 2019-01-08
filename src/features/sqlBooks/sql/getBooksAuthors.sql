@@ -1,9 +1,10 @@
 SELECT
-    CONCAT(author_first_name, ' ', author_last_name) AS author_name,
+    CONCAT(author.first_name, ' ', author.last_name) AS author_name,
     COUNT(*) as count,
-    MIN(released_year) as min_released_year,
-    MAX(released_year) as max_released_year,
-    SUM(stock_quantity) as total_stock_quantity,
-    AVG(pages) as average_pages
-FROM books
-GROUP BY author_last_name,  author_first_name;
+    MIN(book.released_year) as min_released_year,
+    MAX(book.released_year) as max_released_year,
+    SUM(book.stock_quantity) as total_stock_quantity,
+    AVG(book.pages) as average_pages
+FROM books book
+LEFT JOIN authors author ON author.id = book.author_id
+GROUP BY author.last_name, author.first_name;
